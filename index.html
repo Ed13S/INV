@@ -54,7 +54,7 @@
         /* PRINT STYLES: Removes browser header, footer, date & URL */
         @media print {
             @page {
-                margin: 0 !important;
+                margin: 0;
                 size: auto;
             }
             html, body {
@@ -62,8 +62,8 @@
                 padding: 0 !important;
                 background: #ffffff !important;
                 color: #000000 !important;
-                width: 100% !important;
-                height: 100% !important;
+                height: auto !important;
+                min-height: 0 !important;
             }
             .no-print {
                 display: none !important;
@@ -74,16 +74,18 @@
                 padding: 0 !important;
                 margin: 0 !important;
             }
-            .-card {
+            .invoice-card {
                 border: none !important;
                 box-shadow: none !important;
                 padding: 12mm 15mm !important;
                 margin: 0 !important;
                 background: #ffffff !important;
                 border-radius: 0 !important;
+                height: auto !important;
             }
             .page-break {
                 page-break-inside: avoid;
+                break-inside: avoid;
             }
         }
     </style>
@@ -123,7 +125,6 @@
                     <label for="inputData" class="block text-sm font-semibold text-slate-800">
                         Paste Trip Message or Summary
                     </label>
-                    <span class="text-xs text-slate-400 font-medium"></span>
                 </div>
                 <textarea id="inputData" rows="4" 
                     class="w-full p-3.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-slate-800 resize-y"
@@ -142,7 +143,7 @@
                     <button onclick="processWithGemini()" 
                         class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-semibold text-xs rounded-xl shadow-sm transition-all duration-150 flex items-center justify-center gap-2">
                         <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
-                        AI Parse
+                        AI Parser
                     </button>
                 </div>
             </div>
@@ -493,8 +494,8 @@ Text: "${text}"`;
         const year = now.getFullYear();
         const refString = day + month + year;
 
-        // Clean document title for seamless PDF saving
-        document.title = `Taxi_Invoice_${refString}`;
+        // Clean document title for seamless PDF saving (INV[Invoice Ref])
+        document.title = `INV${refString}`;
         document.getElementById('refId').innerText = refString;
         document.getElementById('curDate').innerText = now.toLocaleDateString('en-AU');
         document.getElementById('dueDate').innerText = due.toLocaleDateString('en-AU');
