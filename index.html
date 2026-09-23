@@ -102,12 +102,13 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold text-slate-900 tracking-tight">Invoice</h1>
-                <p class="text-xs text-slate-500 font-medium">Imperial Auto Group • Smart Parser & Corporate Generator</p>
+                <p class="text-xs text-slate-500 font-medium">Imperial Auto Group</p>
             </div>
         </div>
         <div class="flex items-center gap-3">
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span> Eddie Singh
+                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+                <span id="typingText" class="font-semibold"></span><span class="animate-pulse font-bold ml-0.5 text-emerald-600">|</span>
             </span>
         </div>
     </header>
@@ -122,7 +123,7 @@
                     <label for="inputData" class="block text-sm font-semibold text-slate-800">
                         Paste Trip Message or Summary
                     </label>
-                    <span class="text-xs text-slate-400 font-medium">Auto-filters totals & formats commas</span>
+                    <span class="text-xs text-slate-400 font-medium"></span>
                 </div>
                 <textarea id="inputData" rows="4" 
                     class="w-full p-3.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-slate-800 resize-y"
@@ -136,12 +137,12 @@
                     <button onclick="processInstant()" 
                         class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs rounded-xl shadow-sm transition-all duration-150 flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        Instant Local Parse
+                        Local Parse
                     </button>
                     <button onclick="processWithGemini()" 
                         class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-semibold text-xs rounded-xl shadow-sm transition-all duration-150 flex items-center justify-center gap-2">
                         <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
-                        Gemini AI Parser
+                        AI Parse
                     </button>
                 </div>
             </div>
@@ -202,7 +203,7 @@
 
             <div class="text-left sm:text-right space-y-3 w-full sm:w-auto">
                 <div class="inline-block bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full">
-                    <span class="text-xs font-bold tracking-wide uppercase text-indigo-700">TAXI INVOICE</span>
+                    <span class="text-xs font-bold tracking-wide uppercase text-indigo-700">INVOICE</span>
                 </div>
                 
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs space-y-1.5 min-w-[200px]">
@@ -523,7 +524,40 @@ Text: "${text}"`;
 
     window.onload = function() {
         updateInvoice();
+        startTypingAnimation();
     };
+
+    function startTypingAnimation() {
+        const text = "Eddie Singh";
+        const el = document.getElementById("typingText");
+        if (!el) return;
+        
+        let charIdx = 0;
+        let isDeleting = false;
+
+        function typeLoop() {
+            if (isDeleting) {
+                charIdx--;
+                el.innerText = text.substring(0, charIdx);
+                if (charIdx === 0) {
+                    isDeleting = false;
+                    setTimeout(typeLoop, 500); // Brief pause when erased
+                    return;
+                }
+                setTimeout(typeLoop, 80); // Speed of backspacing
+            } else {
+                charIdx++;
+                el.innerText = text.substring(0, charIdx);
+                if (charIdx === text.length) {
+                    isDeleting = true;
+                    setTimeout(typeLoop, 2200); // Pause while fully typed
+                    return;
+                }
+                setTimeout(typeLoop, 130); // Speed of typing
+            }
+        }
+        typeLoop();
+    }
 </script>
 </body>
 </html>
