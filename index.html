@@ -51,7 +51,7 @@
             background: #94a3b8;
         }
 
-        /* CRITICAL PRINT STYLES: Removes browser header, footer, date & URL */
+        /* PRINT STYLES: Removes browser header, footer, date & URL */
         @media print {
             @page {
                 margin: 0 !important;
@@ -67,9 +67,6 @@
             }
             .no-print {
                 display: none !important;
-            }
-            .print-only {
-                display: block !important;
             }
             .container-wrapper {
                 max-width: 100% !important;
@@ -95,7 +92,7 @@
 
 <div class="container-wrapper max-w-5xl mx-auto space-y-6">
 
-    <!-- Top Workspace Header (Hidden on Print) -->
+    <!-- Workspace Header -->
     <header class="no-print bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div class="flex items-center gap-3.5">
             <div class="p-3 bg-indigo-600 text-white rounded-xl shadow-md shadow-indigo-200">
@@ -104,18 +101,18 @@
                 </svg>
             </div>
             <div>
-                <h1 class="text-xl font-bold text-slate-900 tracking-tight">Taxi Invoice Studio</h1>
-                <p class="text-xs text-slate-500 font-medium">Imperial Auto Group • Instant Smart Parser & PDF Studio</p>
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight">Taxi Invoice</h1>
+                <p class="text-xs text-slate-500 font-medium">Imperial Auto Group • Smart Parser & Corporate Generator</p>
             </div>
         </div>
         <div class="flex items-center gap-3">
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span> Ultra-Fast Engine
+                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span> Eddie Singh
             </span>
         </div>
     </header>
 
-    <!-- INPUT WORKSPACE PANEL (Hidden on Print) -->
+    <!-- INPUT WORKSPACE PANEL -->
     <div class="no-print grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Text Parsing Engine Box -->
@@ -125,11 +122,11 @@
                     <label for="inputData" class="block text-sm font-semibold text-slate-800">
                         Paste Trip Message or Summary
                     </label>
-                    <span class="text-xs text-slate-400 font-medium">Auto-detects weeks, dates & amounts</span>
+                    <span class="text-xs text-slate-400 font-medium">Auto-filters totals & formats commas</span>
                 </div>
                 <textarea id="inputData" rows="4" 
                     class="w-full p-3.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-slate-800 resize-y"
-                    placeholder="e.g. Week 1, 22/9-26/9 $48. Week 2, 29/9-3/10 $64, Total $112. Thanks"></textarea>
+                    placeholder="e.g. Week 1, 14,15,16/9,$48&#10;Week 2, 21,22/9,$32&#10;Total $80. Please send invoice by lunchtime tomorrow. Thanks"></textarea>
             </div>
 
             <div class="mt-4">
@@ -139,7 +136,7 @@
                     <button onclick="processInstant()" 
                         class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs rounded-xl shadow-sm transition-all duration-150 flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        Instant Local Parse (0ms)
+                        Instant Local Parse
                     </button>
                     <button onclick="processWithGemini()" 
                         class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-semibold text-xs rounded-xl shadow-sm transition-all duration-150 flex items-center justify-center gap-2">
@@ -153,10 +150,10 @@
         <!-- Manual Entry Panel -->
         <div class="lg:col-span-5 bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between">
             <div>
-                <h2 class="text-sm font-semibold text-slate-800 mb-3">Add Custom Item Manually</h2>
+                <h2 class="text-sm font-semibold text-slate-800 mb-3">Add Item Manually</h2>
                 <div class="space-y-3">
                     <div>
-                        <input type="text" id="mDesc" placeholder="Description (e.g. WEEK 3: 06/10 TO 10/10/2026)" 
+                        <input type="text" id="mDesc" placeholder="Description (e.g. WEEK 1: 14/09 TO 16/09/2026)" 
                             class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
                     </div>
                     <div>
@@ -176,7 +173,7 @@
                 </button>
                 <button onclick="clearAll()" 
                     class="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-xs rounded-xl border border-rose-200 transition-all">
-                    Clear All
+                    Clear Lines
                 </button>
             </div>
         </div>
@@ -194,19 +191,18 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-bold tracking-tight text-slate-900">IMPERIAL AUTO GROUP PTY. LTD.</h2>
-                        <p class="text-xs font-medium text-slate-500">Premium Passenger & Transport Solutions</p>
+                        <p class="text-xs font-medium text-slate-500">Taxi Trips Invoice</p>
                     </div>
                 </div>
                 <div class="text-xs text-slate-600 space-y-0.5 pt-2">
                     <p><span class="font-semibold text-slate-700">ABN:</span> 95 610 831 706</p>
                     <p><span class="font-semibold text-slate-700">Contact:</span> 0404 843 222</p>
-                    <p><span class="font-semibold text-slate-700">Email:</span> accounts@imperialautogroup.com.au</p>
                 </div>
             </div>
 
             <div class="text-left sm:text-right space-y-3 w-full sm:w-auto">
                 <div class="inline-block bg-indigo-50 border border-indigo-100 px-4 py-1.5 rounded-full">
-                    <span class="text-xs font-bold tracking-wide uppercase text-indigo-700">TAX INVOICE</span>
+                    <span class="text-xs font-bold tracking-wide uppercase text-indigo-700">TAXI INVOICE</span>
                 </div>
                 
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs space-y-1.5 min-w-[200px]">
@@ -219,8 +215,8 @@
                         <span class="font-semibold text-slate-800" id="curDate">--/--/----</span>
                     </div>
                     <div class="flex justify-between sm:justify-end gap-4">
-                        <span class="text-slate-500 font-medium">Payment Due:</span>
-                        <span class="font-semibold text-slate-800" id="dueDate">--/--/----</span>
+                        <span class="text-slate-500 font-medium">Payment Due Date:</span>
+                        <span class="font-semibold text-indigo-700" id="dueDate">--/--/----</span>
                     </div>
                 </div>
             </div>
@@ -231,7 +227,7 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b-2 border-slate-800 text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-50">
-                        <th class="py-3.5 px-4 rounded-l-lg">Description / Service Rendered</th>
+                        <th class="py-3.5 px-4 rounded-l-lg">Description</th>
                         <th class="py-3.5 px-4 text-right">Amount (AUD)</th>
                         <th class="py-3.5 px-2 no-print w-10 rounded-r-lg"></th>
                     </tr>
@@ -241,7 +237,7 @@
                 </tbody>
                 <tfoot>
                     <tr class="border-t-2 border-slate-900 font-extrabold text-slate-900 text-base">
-                        <td class="py-4 px-4">Grand Total (GST Incl.)</td>
+                        <td class="py-4 px-4">Grand Total</td>
                         <td class="py-4 px-4 text-right text-indigo-700 text-lg" id="grandTotal">$0.00</td>
                         <td class="no-print"></td>
                     </tr>
@@ -249,7 +245,7 @@
             </table>
         </div>
 
-        <!-- Payment & Bank Transfer Details Section -->
+        <!-- Payment & Bank Details Section -->
         <div class="pt-6 border-t border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 page-break">
             <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200/70 text-xs space-y-1.5 w-full md:w-auto min-w-[280px]">
                 <div class="flex items-center gap-2 mb-2">
@@ -275,7 +271,7 @@
                 <button onclick="window.print()" 
                     class="w-full md:w-auto px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2.5">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                    Print / Save PDF (Clean)
+                    Print / Save PDF
                 </button>
             </div>
         </div>
@@ -302,14 +298,30 @@
         return String(n).padStart(2, '0');
     }
 
-    // Standardizes date ranges: DD/MM TO DD/MM/YYYY
+    // Standardizes dates & cleans out comma sequences like "14,15,16/9"
     function cleanFormattedDateRange(desc) {
         const currentYear = new Date().getFullYear();
-        
-        // Pattern 1: Date ranges like 22/9-26/9 or 22/09 to 26/09
-        const rangeRegex = /(\d{1,2})[\/\.](\d{1,2})\s*(?:-|to|\b)\s*(\d{1,2})[\/\.](\d{1,2})(?:[\/\.](\d{2,4}))?/i;
-        let match = desc.match(rangeRegex);
 
+        // Pattern A: Split/comma days e.g. "14,15,16/9" or "14, 15, 16 / 9"
+        const commaListRegex = /(\d{1,2}(?:\s*,\s*\d{1,2})+)\s*[\/\.]\s*(\d{1,2})/i;
+        let match = desc.match(commaListRegex);
+        if (match) {
+            const dayList = match[1].split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+            const month = pad2(parseInt(match[2], 10));
+            if (dayList.length >= 2) {
+                const firstDay = pad2(Math.min(...dayList));
+                const lastDay = pad2(Math.max(...dayList));
+                const formatted = `${firstDay}/${month} TO ${lastDay}/${month}/${currentYear}`;
+                desc = desc.replace(match[0], formatted);
+            } else if (dayList.length === 1) {
+                const formatted = `${pad2(dayList[0])}/${month}/${currentYear}`;
+                desc = desc.replace(match[0], formatted);
+            }
+        }
+
+        // Pattern B: Standard range like 22/9-26/9 or 22/09 to 26/09
+        const rangeRegex = /(\d{1,2})[\/\.](\d{1,2})\s*(?:-|to)\s*(\d{1,2})[\/\.](\d{1,2})(?:[\/\.](\d{2,4}))?/i;
+        match = desc.match(rangeRegex);
         if (match) {
             const d1 = pad2(parseInt(match[1], 10));
             const m1 = pad2(parseInt(match[2], 10));
@@ -319,71 +331,70 @@
             if (y < 100) y += 2000;
 
             const formattedRange = `${d1}/${m1} TO ${d2}/${m2}/${y}`;
-            return desc.replace(match[0], formattedRange);
+            desc = desc.replace(match[0], formattedRange);
         }
 
-        // Pattern 2: Split days e.g. "22,23,24,25/9"
-        const splitDaysRegex = /(\d{1,2})(?:\s*,\s*\d{1,2})+\s*[\/\.]\s*(\d{1,2})/i;
-        match = desc.match(splitDaysRegex);
-        if (match) {
-            const days = desc.match(/\d{1,2}/g);
-            if (days && days.length >= 2) {
-                const month = pad2(parseInt(days[days.length - 1], 10));
-                const d1 = pad2(parseInt(days[0], 10));
-                const d2 = pad2(parseInt(days[days.length - 2], 10));
-                const formattedRange = `${d1}/${month} TO ${d2}/${month}/${currentYear}`;
-                return desc.replace(splitDaysRegex, formattedRange);
-            }
-        }
-
-        return desc;
+        // Remove extraneous trailing/leading commas or spaces
+        return desc.replace(/^[,\s]+|[,\s]+$/g, '').replace(/,\s*,/g, ',').trim();
     }
 
-    // Ultra-fast client side Instant Regex Parser (0ms latency)
+    // Filter logic to prevent overall total phrases from being added as items
+    function isTotalLine(text) {
+        return /\btotal\b/i.test(text) || /\bgrand total\b/i.test(text) || /\bbalance\b/i.test(text);
+    }
+
+    // Instant local parser for fast, accurate zero-latency parsing
     function processInstant() {
         const text = document.getElementById('inputData').value.trim();
         if (!text) { setStatus('Please paste a trip summary text first.', 'error'); return; }
 
         const found = [];
-        // Matches "Week 1, 22/9-26/9 $48" or "Wk 2: 29/9 to 3/10 $64"
-        const regex = /(?:Week|Wk)?\s*(\d+)?[\s,:-]*([\d\/\.,\s\-to]+)[\s\$-]+(\d+(?:\.\d{1,2})?)/gi;
-        
-        let match;
-        while ((match = regex.exec(text)) !== null) {
-            let weekNum = match[1];
-            let rawDates = match[2].trim();
-            let price = parseFloat(match[3]);
+        const rawLines = text.split(/\r?\n/);
 
-            if (!isNaN(price) && price > 0) {
-                let weekPrefix = weekNum ? `WEEK ${weekNum}: ` : 'WEEK: ';
-                let cleanedDesc = cleanFormattedDateRange(rawDates);
-                let fullDesc = (weekPrefix + cleanedDesc).toUpperCase();
-                
-                if (!found.some(item => item.d === fullDesc && item.p === price)) {
-                    found.push({ d: fullDesc, p: price });
+        rawLines.forEach(line => {
+            const trimmedLine = line.trim();
+            if (!trimmedLine || isTotalLine(trimmedLine)) return;
+
+            // Pattern 1: Week entries like "Week 1, 14,15,16/9,$48" or "Wk 2: 21,22/9 $32"
+            const weekRegex = /(?:Week|Wk)?\s*(\d+)?[\s,:-]*([\d\/\.,\s\-to]+)[\s,\$-]+(\d+(?:\.\d{1,2})?)/i;
+            let match = trimmedLine.match(weekRegex);
+
+            if (match) {
+                let weekNum = match[1];
+                let rawDates = match[2].trim();
+                let price = parseFloat(match[3]);
+
+                if (!isNaN(price) && price > 0) {
+                    let weekPrefix = weekNum ? `WEEK ${weekNum}: ` : '';
+                    let cleanedDates = cleanFormattedDateRange(rawDates);
+                    let fullDesc = (weekPrefix + cleanedDates).toUpperCase();
+                    
+                    if (!found.some(item => item.d === fullDesc && item.p === price)) {
+                        found.push({ d: fullDesc, p: price });
+                    }
+                    return;
                 }
             }
-        }
 
-        // Fallback for generic line items with $ price
-        if (found.length === 0) {
-            const fallbackRegex = /([a-zA-Z0-9\s\/\.,\-]+)\$\s*(\d+(?:\.\d{1,2})?)/g;
-            while ((match = fallbackRegex.exec(text)) !== null) {
+            // Pattern 2: Generic description with dollar amount $XX
+            const genericRegex = /([a-zA-Z0-9\s\/\.,\-]+)\$\s*(\d+(?:\.\d{1,2})?)/i;
+            match = trimmedLine.match(genericRegex);
+            if (match && !isTotalLine(match[1])) {
                 let desc = match[1].trim().toUpperCase();
                 let price = parseFloat(match[2]);
                 if (desc && !isNaN(price)) {
                     found.push({ d: cleanFormattedDateRange(desc), p: price });
                 }
             }
-        }
+        });
 
         if (found.length === 0) {
-            setStatus('No structured trip patterns detected. Try manual input or Gemini AI.', 'error');
+            setStatus('No individual trip items detected. Ensure lines contain trip details & amounts.', 'error');
             return;
         }
 
         found.forEach(item => lines.push(item));
-        setStatus(`Successfully parsed ${found.length} line item(s) instantly!`, 'success');
+        setStatus(`Successfully parsed ${found.length} line item(s)!`, 'success');
         updateInvoice();
         document.getElementById('inputData').value = '';
     }
@@ -395,8 +406,12 @@
 
         setStatus('Processing text with Gemini AI...', 'loading');
 
-        const prompt = `Extract all taxi trip items from this text into a clean JSON array of objects with keys "desc" and "price".
-Format "desc" cleanly using format: "WEEK X: DD/MM TO DD/MM/2026".
+        const prompt = `Extract all individual taxi trip line items from this text into a clean JSON array of objects with keys "desc" and "price".
+CRITICAL RULES:
+1. STRICTLY EXCLUDE summary lines, grand totals, overall totals (e.g. "Total $80"). DO NOT include total sum lines as items.
+2. Format "desc" as: "WEEK X: DD/MM TO DD/MM/2026" (or clean descriptions without commas).
+3. Output ONLY a valid JSON array of objects.
+
 Text: "${text}"`;
 
         try {
@@ -421,19 +436,21 @@ Text: "${text}"`;
 
             let addedCount = 0;
             parsedItems.forEach(item => {
-                if (item && item.desc && typeof item.price !== 'undefined') {
+                if (item && item.desc && typeof item.price !== 'undefined' && !isTotalLine(item.desc)) {
                     lines.push({ d: String(item.desc).toUpperCase(), p: parseFloat(item.price) });
                     addedCount++;
                 }
             });
 
-            setStatus(`Gemini AI successfully parsed ${addedCount} item(s)!`, 'success');
+            if (addedCount === 0) throw new Error('AI returned no valid line items');
+
+            setStatus(`Gemini AI parsed ${addedCount} item(s)!`, 'success');
             updateInvoice();
             document.getElementById('inputData').value = '';
 
         } catch (err) {
-            console.warn('Gemini API failed, executing instant local fallback:', err.message);
-            setStatus('Gemini unavailable. Running instant local fallback...', 'info');
+            console.warn('Gemini API failed or unavailable, executing instant local fallback:', err.message);
+            setStatus('Gemini unavailable. Executing instant local fallback...', 'info');
             processInstant();
         }
     }
@@ -446,7 +463,7 @@ Text: "${text}"`;
             updateInvoice();
             document.getElementById('mDesc').value = '';
             document.getElementById('mPrice').value = '';
-            setStatus('Manual item added successfully.', 'success');
+            setStatus('Manual line item added.', 'success');
         } else {
             setStatus('Please fill in both description and price.', 'error');
         }
@@ -465,15 +482,17 @@ Text: "${text}"`;
 
     function updateInvoice() {
         const now = new Date();
-        const due = new Date();
-        due.setDate(now.getDate() + 14);
+        
+        // Exact 1 month calculation
+        const due = new Date(now.getTime());
+        due.setMonth(due.getMonth() + 1);
 
         const day = pad2(now.getDate());
         const month = pad2(now.getMonth() + 1);
         const year = now.getFullYear();
         const refString = day + month + year;
 
-        // Set document title so saved PDFs default to a clean filename
+        // Clean document title for seamless PDF saving
         document.title = `Taxi_Invoice_${refString}`;
         document.getElementById('refId').innerText = refString;
         document.getElementById('curDate').innerText = now.toLocaleDateString('en-AU');
