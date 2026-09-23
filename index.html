@@ -495,7 +495,7 @@ Text: "${text}"`;
         const refString = day + month + year;
 
         // Clean document title for seamless PDF saving (INV[Invoice Ref])
-        document.title = `INV${refString}`;
+        document.title = `INV_${refString}`;
         document.getElementById('refId').innerText = refString;
         document.getElementById('curDate').innerText = now.toLocaleDateString('en-AU');
         document.getElementById('dueDate').innerText = due.toLocaleDateString('en-AU');
