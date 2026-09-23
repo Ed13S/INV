@@ -107,7 +107,37 @@
         </div>
         <div class="flex items-center gap-3">
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span> Eddie Singh
+               function startTypingAnimation() {
+        const text = "Eddie Singh";
+        const el = document.getElementById("typingText");
+        if (!el) return;
+        
+        let charIdx = 0;
+        let isDeleting = false;
+
+        function typeLoop() {
+            if (isDeleting) {
+                charIdx--;
+                el.innerText = text.substring(0, charIdx);
+                if (charIdx === 0) {
+                    isDeleting = false;
+                    setTimeout(typeLoop, 500); // Pause briefly when fully erased
+                    return;
+                }
+                setTimeout(typeLoop, 80); // Speed of backspacing
+            } else {
+                charIdx++;
+                el.innerText = text.substring(0, charIdx);
+                if (charIdx === text.length) {
+                    isDeleting = true;
+                    setTimeout(typeLoop, 2200); // Hold time when fully typed
+                    return;
+                }
+                setTimeout(typeLoop, 130); // Speed of typing
+            }
+        }
+        typeLoop();
+    }
             </span>
         </div>
     </header>
