@@ -249,6 +249,14 @@
                 class="w-32 px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
             <span id="tripsTotal" class="text-sm font-bold text-indigo-700"></span>
         </div>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mt-3">
+            <label for="tripsFrom" class="text-sm font-medium text-slate-700">Trips from</label>
+            <input type="date" id="tripsFrom" oninput="setTrips()"
+                class="px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+            <label for="tripsTo" class="text-sm font-medium text-slate-700">to</label>
+            <input type="date" id="tripsTo" oninput="setTrips()"
+                class="px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+        </div>
     </div>
 
     <!-- PREVIEW & PRINTABLE INVOICE CARD -->
@@ -365,6 +373,21 @@
 <script>
     let lines = [];
     let trips = 0; // number of flat-rate trips for the selected client
+
+    // Builds "14/09 TO 16/09/2026" (same style as the other lines) from the two date pickers
+    function tripsRangeText() {
+        const from = document.getElementById('tripsFrom').value; // yyyy-mm-dd
+        const to = document.getElementById('tripsTo').value;
+        const fmt = v => { const [y, m, d] = v.split('-'); return { d, m, y }; };
+        if (from && to) {
+            const a = fmt(from), b = fmt(to);
+            if (from === to) return `${b.d}/${b.m}/${b.y}`;
+            return `${a.d}/${a.m}${a.y !== b.y ? '/' + a.y : ''} TO ${b.d}/${b.m}/${b.y}`;
+        }
+        if (from) { const a = fmt(from); return `FROM ${a.d}/${a.m}/${a.y}`; }
+        if (to) { const b = fmt(to); return `UP TO ${b.d}/${b.m}/${b.y}`; }
+        return '';
+    }
 
     function setTrips() {
         const n = parseInt(document.getElementById('tripsCount').value, 10);
@@ -568,6 +591,8 @@ Text: "${text}"`;
         lines = [];
         trips = 0;
         document.getElementById('tripsCount').value = 0;
+        document.getElementById('tripsFrom').value = '';
+        document.getElementById('tripsTo').value = '';
         updateInvoice();
         setStatus('All invoice items cleared.', 'info');
     }
@@ -602,7 +627,7 @@ Text: "${text}"`;
             total += amt;
             tbody.innerHTML += `
                 <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="py-3.5 px-4 font-semibold text-slate-800">TAXI TRIPS: ${trips} &times; $${rate.toFixed(2)} PER TRIP</td>
+                    <td class="py-3.5 px-4 font-semibold text-slate-800">${tripsRangeText() ? esc(tripsRangeText()) + ': ' : 'TAXI TRIPS: '}${trips} TRIP${trips === 1 ? '' : 'S'} &times; $${rate.toFixed(2)}</td>
                     <td class="py-3.5 px-4 text-right font-bold text-slate-900">$${amt.toFixed(2)}</td>
                     <td class="py-3.5 px-2 no-print"></td>
                 </tr>`;
