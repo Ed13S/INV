@@ -88,6 +88,43 @@
                 break-inside: avoid;
             }
         }
+
+        /* PHONE LAYOUT: screen only, small widths only. Laptop and print are unchanged. */
+        @media screen and (max-width: 639px) {
+            body { padding: 0.75rem !important; }
+            .container-wrapper { gap: 1rem; }
+
+            /* Tabs: two equal, thumb-sized buttons */
+            nav.no-print a { flex: 1; text-align: center; padding: 0.75rem 0.5rem !important; }
+
+            /* Tighter cards */
+            .p-6 { padding: 1.1rem !important; }
+            .invoice-card { padding: 1.1rem !important; }
+
+            /* 16px inputs stop iOS zooming in on focus; bigger touch targets */
+            input, textarea { font-size: 16px !important; }
+            div.no-print button { min-height: 44px; }
+
+            /* Invoice header blocks use the full width */
+            #output .min-w-\[200px\], #output .min-w-\[280px\] { min-width: 0 !important; width: 100%; }
+
+            /* Invoice table fits a phone without sideways scrolling */
+            #output table th, #output table td { padding: 0.65rem 0.4rem !important; font-size: 12px; }
+            #output thead th { font-size: 10px; letter-spacing: 0; }
+            #output tfoot td { font-size: 14px; }
+            #grandTotal { font-size: 16px !important; }
+
+            /* Client rows: details on top, full-width buttons underneath */
+            #clientList > div { flex-direction: column; }
+            #clientList > div > div:last-child { width: 100%; }
+            #clientList > div > div:last-child button { flex: 1; min-height: 40px; }
+
+            /* Trip lines: dates share a row, trips + remove below */
+            #tripRows input[type="date"] { flex: 1 1 8rem; min-width: 0; }
+            #tripRows > div > span.w-10 { width: auto; }
+            #tripRows input[type="number"] { flex: 1 1 5rem; width: auto; }
+            #refOverride, #tripsPanel .sm\:w-72 { width: 100% !important; }
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 sm:p-6 lg:p-8">

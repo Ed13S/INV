@@ -88,6 +88,21 @@
                 break-inside: avoid;
             }
         }
+
+        /* PHONE LAYOUT: screen only, small widths only. Laptop and print are unchanged. */
+        @media screen and (max-width: 639px) {
+            body { padding: 0.75rem !important; }
+            .container-wrapper { gap: 1rem; }
+            nav.no-print a { flex: 1; text-align: center; padding: 0.75rem 0.5rem !important; }
+            .p-6 { padding: 1.1rem !important; }
+            .invoice-card { padding: 1.1rem !important; }
+            input, textarea { font-size: 16px !important; }
+            div.no-print button { min-height: 44px; }
+            #output .min-w-\[200px\], #output .min-w-\[280px\] { min-width: 0 !important; width: 100%; }
+            #output table th, #output table td { padding: 0.65rem 0.4rem !important; font-size: 12px; }
+            #output thead th { font-size: 10px; letter-spacing: 0; }
+            #grandTotal { font-size: 16px !important; }
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 sm:p-6 lg:p-8">
