@@ -89,6 +89,11 @@
             }
         }
 
+        /* No trailing blank page: the card's bottom padding can spill onto page 2 (seen on iPhone Safari) */
+        @media print {
+            .invoice-card { padding-bottom: 0 !important; margin-bottom: 0 !important; break-after: avoid; page-break-after: avoid; }
+        }
+
         /* PHONE LAYOUT: screen only, small widths only. Laptop and print are unchanged. */
         @media screen and (max-width: 639px) {
             body { padding: 0.75rem !important; }

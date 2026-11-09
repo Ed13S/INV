@@ -89,12 +89,17 @@
             }
         }
 
+        /* No trailing blank page: the card's bottom padding can spill onto page 2 (seen on iPhone Safari) */
+        @media print {
+            .invoice-card { padding-bottom: 0 !important; margin-bottom: 0 !important; break-after: avoid; page-break-after: avoid; }
+        }
+
         /* PRINT ON A NARROW PAGE (phone): compact spacing so the whole invoice stays on one page.
            Wider pages (A4 / Letter) are not affected. */
         @media print {
           .container-wrapper { container-type: inline-size; }
           @container (max-width: 640px) {
-            .invoice-card { padding: 5mm !important; }
+            .invoice-card { padding: 5mm 5mm 0 !important; }
             #output .pb-8 { padding-bottom: 0.6rem !important; }
             #output .mb-8 { margin-bottom: 0.6rem !important; }
             #output .pt-6 { padding-top: 0.5rem !important; }
