@@ -686,18 +686,24 @@ Text: "${text}"`;
         }
         if (selectedClientId && !clients.some(c => c.id === selectedClientId)) selectedClientId = null;
 
+        // Add the surname to a Veronica entry already saved in this browser
+        if (clients.some(c => c.id === 'c_veronica' && c.name === 'Veronica')) {
+            clients.forEach(c => { if (c.id === 'c_veronica' && c.name === 'Veronica') c.name = 'Veronica Cattolio'; });
+            try { localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients)); } catch (e) {}
+        }
+
         // Seed Veronica ($8 flat rate per trip) once; deleting her afterwards sticks
         try {
             if (!localStorage.getItem('inv_seed_veronica_v1')) {
                 if (!clients.some(c => /^veronica\b/i.test(c.name))) {
-                    clients.push({ id: 'c_veronica', name: 'Veronica', abn: '', address: '', email: '', phone: '', flatRate: 8 });
+                    clients.push({ id: 'c_veronica', name: 'Veronica Cattolio', abn: '', address: '', email: '', phone: '', flatRate: 8 });
                     localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
                 }
                 localStorage.setItem('inv_seed_veronica_v1', '1');
             }
         } catch (e) {
             if (!clients.some(c => /^veronica\b/i.test(c.name))) {
-                clients.push({ id: 'c_veronica', name: 'Veronica', abn: '', address: '', email: '', phone: '', flatRate: 8 });
+                clients.push({ id: 'c_veronica', name: 'Veronica Cattolio', abn: '', address: '', email: '', phone: '', flatRate: 8 });
             }
         }
     }
