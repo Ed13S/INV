@@ -181,6 +181,53 @@
         </div>
     </div>
 
+    <!-- CLIENT MANAGER PANEL -->
+    <div class="no-print bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-sm font-semibold text-slate-800">Clients</h2>
+            <span id="clientCount" class="text-xs text-slate-500 font-medium"></span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Client form (add / edit) -->
+            <div class="lg:col-span-5">
+                <p id="clientFormTitle" class="text-xs font-semibold text-slate-600 mb-2">Add Client</p>
+                <input type="hidden" id="cId">
+                <div class="space-y-2.5">
+                    <input type="text" id="cName" placeholder="Client / Company name *"
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    <input type="text" id="cAbn" placeholder="ABN (optional)"
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    <textarea id="cAddress" rows="2" placeholder="Address (optional)"
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-y"></textarea>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <input type="email" id="cEmail" placeholder="Email (optional)"
+                            class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <input type="tel" id="cPhone" placeholder="Phone (optional)"
+                            class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                    <button onclick="saveClient()" id="cSaveBtn"
+                        class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-xs rounded-xl shadow-sm transition-all">
+                        + Add Client
+                    </button>
+                    <button onclick="resetClientForm()"
+                        class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition-all">
+                        Cancel / Clear
+                    </button>
+                </div>
+                <div id="clientStatus" class="text-xs font-medium min-h-[20px] mt-2"></div>
+            </div>
+
+            <!-- Client list -->
+            <div class="lg:col-span-7">
+                <p class="text-xs font-semibold text-slate-600 mb-2">Saved Clients <span class="font-normal text-slate-400">(click "Use" to bill an invoice to a client)</span></p>
+                <div id="clientList" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- PREVIEW & PRINTABLE INVOICE CARD -->
     <div id="output" class="invoice-card bg-white rounded-2xl p-8 sm:p-12 shadow-md border border-slate-200/80 transition-all duration-300">
         
@@ -221,6 +268,17 @@
                         <span class="font-semibold text-indigo-700" id="dueDate">--/--/----</span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Bill To -->
+        <div id="billToBlock" class="mb-8 hidden page-break">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Bill To</p>
+            <div class="text-xs text-slate-700 space-y-0.5">
+                <p id="billName" class="text-sm font-bold text-slate-900"></p>
+                <p id="billAbn"></p>
+                <p id="billAddress" class="whitespace-pre-line"></p>
+                <p id="billContact"></p>
             </div>
         </div>
 
@@ -521,9 +579,165 @@ Text: "${text}"`;
 
         document.getElementById('grandTotal').innerText = '$' + total.toFixed(2);
         document.getElementById('output').style.opacity = lines.length > 0 ? '1' : '0.6';
+        renderBillTo();
+    }
+
+    // ---------- CLIENT MANAGEMENT (stored in this browser's localStorage) ----------
+    const CLIENTS_KEY = 'inv_clients_v1';
+    const SELECTED_KEY = 'inv_selected_client_v1';
+    let clients = [];
+    let selectedClientId = null;
+
+    function loadClients() {
+        try {
+            const raw = localStorage.getItem(CLIENTS_KEY);
+            clients = raw ? JSON.parse(raw) : [];
+            if (!Array.isArray(clients)) clients = [];
+            selectedClientId = localStorage.getItem(SELECTED_KEY) || null;
+        } catch (e) {
+            clients = [];
+            selectedClientId = null;
+        }
+        if (selectedClientId && !clients.some(c => c.id === selectedClientId)) selectedClientId = null;
+    }
+
+    function persistClients() {
+        try {
+            localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
+            if (selectedClientId) localStorage.setItem(SELECTED_KEY, selectedClientId);
+            else localStorage.removeItem(SELECTED_KEY);
+        } catch (e) {
+            setClientStatus('Could not save to browser storage.', 'error');
+        }
+    }
+
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, ch => (
+            { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]
+        ));
+    }
+
+    function setClientStatus(msg, type = 'info') {
+        const el = document.getElementById('clientStatus');
+        const colorMap = { error: 'text-rose-600', success: 'text-emerald-600', info: 'text-slate-600' };
+        el.className = `text-xs font-medium min-h-[20px] mt-2 ${colorMap[type] || colorMap.info}`;
+        el.innerText = msg;
+    }
+
+    function resetClientForm() {
+        ['cId', 'cName', 'cAbn', 'cAddress', 'cEmail', 'cPhone'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('clientFormTitle').innerText = 'Add Client';
+        document.getElementById('cSaveBtn').innerText = '+ Add Client';
+    }
+
+    function saveClient() {
+        const id = document.getElementById('cId').value;
+        const name = document.getElementById('cName').value.trim();
+        if (!name) { setClientStatus('Client name is required.', 'error'); return; }
+
+        const data = {
+            name,
+            abn: document.getElementById('cAbn').value.trim(),
+            address: document.getElementById('cAddress').value.trim(),
+            email: document.getElementById('cEmail').value.trim(),
+            phone: document.getElementById('cPhone').value.trim()
+        };
+
+        if (id) {
+            const idx = clients.findIndex(c => c.id === id);
+            if (idx !== -1) clients[idx] = { id, ...data };
+            setClientStatus('Client updated.', 'success');
+        } else {
+            const newId = 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+            clients.push({ id: newId, ...data });
+            if (!selectedClientId) selectedClientId = newId;
+            setClientStatus('Client added.', 'success');
+        }
+
+        persistClients();
+        resetClientForm();
+        renderClients();
+        updateInvoice();
+    }
+
+    function editClient(id) {
+        const c = clients.find(c => c.id === id);
+        if (!c) return;
+        document.getElementById('cId').value = c.id;
+        document.getElementById('cName').value = c.name;
+        document.getElementById('cAbn').value = c.abn || '';
+        document.getElementById('cAddress').value = c.address || '';
+        document.getElementById('cEmail').value = c.email || '';
+        document.getElementById('cPhone').value = c.phone || '';
+        document.getElementById('clientFormTitle').innerText = 'Edit Client';
+        document.getElementById('cSaveBtn').innerText = 'Save Changes';
+        document.getElementById('cName').focus();
+    }
+
+    function deleteClient(id) {
+        const c = clients.find(c => c.id === id);
+        if (!c) return;
+        if (!confirm(`Delete client "${c.name}"? This cannot be undone.`)) return;
+        clients = clients.filter(x => x.id !== id);
+        if (selectedClientId === id) selectedClientId = null;
+        if (document.getElementById('cId').value === id) resetClientForm();
+        persistClients();
+        renderClients();
+        updateInvoice();
+        setClientStatus('Client deleted.', 'info');
+    }
+
+    function selectClient(id) {
+        // Clicking the active client again removes it from the invoice
+        selectedClientId = (selectedClientId === id) ? null : id;
+        persistClients();
+        renderClients();
+        updateInvoice();
+    }
+
+    function renderClients() {
+        const list = document.getElementById('clientList');
+        document.getElementById('clientCount').innerText =
+            clients.length ? `${clients.length} client${clients.length === 1 ? '' : 's'}` : '';
+
+        if (!clients.length) {
+            list.innerHTML = '<p class="text-xs text-slate-400 italic py-4 text-center border border-dashed border-slate-200 rounded-xl">No clients yet. Add one on the left.</p>';
+            return;
+        }
+
+        list.innerHTML = clients.map(c => {
+            const active = c.id === selectedClientId;
+            const meta = [c.abn ? 'ABN ' + c.abn : '', c.email, c.phone].filter(Boolean).map(esc).join(' &middot; ');
+            return `
+                <div class="flex items-start justify-between gap-3 p-3 rounded-xl border ${active ? 'border-indigo-300 bg-indigo-50/60' : 'border-slate-200 bg-slate-50'}">
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-slate-900 truncate">${esc(c.name)}${active ? ' <span class="ml-1 text-[10px] font-bold text-indigo-700 uppercase">On invoice</span>' : ''}</p>
+                        ${c.address ? `<p class="text-xs text-slate-600 whitespace-pre-line">${esc(c.address)}</p>` : ''}
+                        ${meta ? `<p class="text-[11px] text-slate-500">${meta}</p>` : ''}
+                    </div>
+                    <div class="flex shrink-0 gap-1.5">
+                        <button onclick="selectClient('${c.id}')" class="px-2.5 py-1.5 text-[11px] font-semibold rounded-lg ${active ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-700 border border-indigo-200 hover:bg-indigo-50'}">${active ? 'Remove' : 'Use'}</button>
+                        <button onclick="editClient('${c.id}')" class="px-2.5 py-1.5 text-[11px] font-semibold rounded-lg bg-white text-slate-700 border border-slate-200 hover:bg-slate-100">Edit</button>
+                        <button onclick="deleteClient('${c.id}')" class="px-2.5 py-1.5 text-[11px] font-semibold rounded-lg bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100">Delete</button>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    function renderBillTo() {
+        const block = document.getElementById('billToBlock');
+        const c = clients.find(c => c.id === selectedClientId);
+        if (!c) { block.classList.add('hidden'); return; }
+        block.classList.remove('hidden');
+        document.getElementById('billName').innerText = c.name;
+        document.getElementById('billAbn').innerText = c.abn ? 'ABN: ' + c.abn : '';
+        document.getElementById('billAddress').innerText = c.address || '';
+        document.getElementById('billContact').innerText = [c.email, c.phone].filter(Boolean).join('  |  ');
     }
 
     window.onload = function() {
+        loadClients();
+        renderClients();
         updateInvoice();
         startTypingAnimation();
     };
