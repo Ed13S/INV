@@ -89,6 +89,29 @@
             }
         }
 
+        /* PRINT ON A NARROW PAGE (phone): compact spacing so the whole invoice stays on one page.
+           Wider pages (A4 / Letter) are not affected. */
+        @media print {
+          .container-wrapper { container-type: inline-size; }
+          @container (max-width: 640px) {
+            .invoice-card { padding: 5mm !important; }
+            #output .pb-8 { padding-bottom: 0.6rem !important; }
+            #output .mb-8 { margin-bottom: 0.6rem !important; }
+            #output .pt-6 { padding-top: 0.5rem !important; }
+            #output .gap-6 { gap: 0.5rem !important; }
+            #output h2.text-xl { font-size: 13px !important; }
+            #output .w-10.h-10 { width: 28px !important; height: 28px !important; font-size: 11px !important; }
+            #output .p-4, #output .p-5 { padding: 0.45rem !important; }
+            #output .space-y-2 > * + * { margin-top: 0.25rem !important; }
+            #output .min-w-\[200px\], #output .min-w-\[280px\] { min-width: 0 !important; width: 100%; }
+            #output table { table-layout: fixed; width: 100%; }
+            #output table th, #output table td { padding: 0.3rem 0.25rem !important; font-size: 9px; overflow-wrap: anywhere; }
+            #output thead th { font-size: 7px; letter-spacing: 0; }
+            #output table th:first-child, #output table td:first-child { width: 44%; }
+            #grandTotal { font-size: 12px !important; }
+          }
+        }
+
         /* PHONE LAYOUT: screen only, small widths only. Laptop and print are unchanged. */
         @media screen and (max-width: 639px) {
             body { padding: 0.75rem !important; }
