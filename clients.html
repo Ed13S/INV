@@ -317,7 +317,7 @@
         <div class="mb-8 overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="border-b-2 border-slate-800 text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-50">
+                    <tr id="tableHead" class="border-b-2 border-slate-800 text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-50">
                         <th class="py-3.5 px-4 rounded-l-lg">Description</th>
                         <th class="py-3.5 px-4 text-right">Amount (AUD)</th>
                         <th class="py-3.5 px-2 no-print w-10 rounded-r-lg"></th>
@@ -327,7 +327,7 @@
                     <!-- Line items dynamically populated -->
                 </tbody>
                 <tfoot>
-                    <tr class="border-t-2 border-slate-900 font-extrabold text-slate-900 text-base">
+                    <tr id="tableFoot" class="border-t-2 border-slate-900 font-extrabold text-slate-900 text-base">
                         <td class="py-4 px-4">Grand Total</td>
                         <td class="py-4 px-4 text-right text-indigo-700 text-lg" id="grandTotal">$0.00</td>
                         <td class="no-print"></td>
@@ -622,12 +622,25 @@ Text: "${text}"`;
         // Flat-rate client: one row of (trips x rate)
         const sel = clients.find(c => c.id === selectedClientId);
         const rate = sel && sel.flatRate > 0 ? sel.flatRate : 0;
+        const flat = rate > 0;
+
+        // Table columns: Line Item | Qty | Price | Total for flat-rate clients, otherwise Description | Amount
+        const th = 'py-3.5 px-4';
+        document.getElementById('tableHead').innerHTML = flat
+            ? `<th class="${th} rounded-l-lg">Line Item</th><th class="${th} text-right">Qty</th><th class="${th} text-right">Price</th><th class="${th} text-right">Total (AUD)</th><th class="py-3.5 px-2 no-print w-10 rounded-r-lg"></th>`
+            : `<th class="${th} rounded-l-lg">Description</th><th class="${th} text-right">Amount (AUD)</th><th class="py-3.5 px-2 no-print w-10 rounded-r-lg"></th>`;
+        document.getElementById('tableFoot').innerHTML = flat
+            ? `<td class="py-4 px-4" colspan="3">Grand Total</td><td class="py-4 px-4 text-right text-indigo-700 text-lg" id="grandTotal">$0.00</td><td class="no-print"></td>`
+            : `<td class="py-4 px-4">Grand Total</td><td class="py-4 px-4 text-right text-indigo-700 text-lg" id="grandTotal">$0.00</td><td class="no-print"></td>`;
+
         if (rate > 0 && trips > 0) {
             const amt = trips * rate;
             total += amt;
             tbody.innerHTML += `
                 <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="py-3.5 px-4 font-semibold text-slate-800">${tripsRangeText() ? esc(tripsRangeText()) + ': ' : 'TAXI TRIPS: '}${trips} TRIP${trips === 1 ? '' : 'S'} &times; $${rate.toFixed(2)}</td>
+                    <td class="py-3.5 px-4 font-semibold text-slate-800">TAXI TRIPS${tripsRangeText() ? ': ' + esc(tripsRangeText()) : ''}</td>
+                    <td class="py-3.5 px-4 text-right text-slate-700">${trips}</td>
+                    <td class="py-3.5 px-4 text-right text-slate-700">$${rate.toFixed(2)}</td>
                     <td class="py-3.5 px-4 text-right font-bold text-slate-900">$${amt.toFixed(2)}</td>
                     <td class="py-3.5 px-2 no-print"></td>
                 </tr>`;
@@ -638,6 +651,7 @@ Text: "${text}"`;
             tbody.innerHTML += `
                 <tr class="hover:bg-slate-50 transition-colors">
                     <td class="py-3.5 px-4 font-semibold text-slate-800">${item.d}</td>
+                    ${flat ? `<td class="py-3.5 px-4 text-right text-slate-700">1</td><td class="py-3.5 px-4 text-right text-slate-700">$${item.p.toFixed(2)}</td>` : ''}
                     <td class="py-3.5 px-4 text-right font-bold text-slate-900">$${item.p.toFixed(2)}</td>
                     <td class="py-3.5 px-2 no-print text-right">
                         <button onclick="deleteLine(${index})" class="text-slate-300 hover:text-rose-600 transition-colors p-1" title="Remove item">
